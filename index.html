@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous">
+    </script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous">
+    </script>
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="https://angularjs.org/favicon.ico" type="image/x-icon">
+    <link href="fontawesome-free-5.12.1-web/css/all.min.css" rel="stylesheet">
+    <title>Appli Angular</title>
+</head>
+
+<body ng-app="webInter" ng-controller="interCtrl">
+    <h1 class="alert alert-primary">Gestion des interventions</h1>
+
+
+
+    <div class="container">
+        <ul class="nav  spacer">
+            <li class="nav-item" ng-repeat="dossier in dossiers"><a ng-click="selectionDossier( dossier)"
+                    class="nav-link" ng-class="{ active: dossier == dossierCourant}"
+                    href="#{{dossier.value}}">{{dossier.label}}</a>
+            </li>
+            <li class="nav-item">
+                <a class="btn btn-primary" href="#" role="button" data-toggle="modal" data-target="#newInter"
+                    class="nav-link">Ajouter une intervention</a>
+
+
+            </li>
+        </ul>
+
+        <div ng-show="dossierCourant != null &amp;&amp; interSelectionne == null">
+            <table class=" table table-striped table-hover spacer">
+                <thead>
+
+                    <th class="colLib">
+                        <a ng-click="triParInters('libelle')">Libelle</a>
+                        <span class="hspacer"><i ng-class="cssChevronTri('libelle')"></i></span>
+                    </th>
+                    <th class="colDesc">
+                        <a ng-click="triParInters('descr')">Description</a>
+                        <span class="hspacer"><i ng-class="cssChevronTri('descr')"></i></span>
+                    </th>
+                    <th class="colinterv">
+                        <a ng-click="triParInters('nameinter')">Intervenant</a>
+                        <span class="hspacer"><i ng-class="cssChevronTri('nameinter')"></i></span>
+                    </th>
+                    <th class="colLieu">
+                        <a ng-click="triParInters('lieu')">Lieu</a>
+                        <span class="hspacer"><i ng-class="cssChevronTri('lieu')"></i></span>
+                    </th>
+                    <th class="colDate">
+                        <a ng-click="triParInters('date')">Date</a>
+                        <span class="hspacer"><i ng-class="cssChevronTri('date')"></i></span>
+                    </th>
+                    <th>
+                        modifier
+                    </th>
+
+
+                </thead>
+                <tbody>
+                    <tr ng-repeat="inter in dossierCourant.inters | orderBy:champTri:triDescendant" class="clickable"
+                        ng-click="versInter(dossierCourant, inter)">
+                        <td>{{inter.libelle}}</td>
+                        <td>{{inter.descr}}</td>
+                        <td>{{inter.nameInter}}</td>
+                        <td>{{inter.lieu}}</td>
+                        <td>{{inter.date | date:'short'}}</td>
+                        <td class="modifInter"><a href=""><span><i class="fas fa-edit"></i></span></a></td>
+
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+            <div class="alert alert-info">
+                le dossier contient {{dossierCourant.inters.length}} interventions.
+
+            </div>
+        </div>
+
+
+        <div ng-show="interSelectionne != null">
+            <div class="card card-body bg-light">
+
+                <h3>{{interSelectionne.libelle}}</h3>
+                <p><label for="">Intervenant: </label><span>{{interSelectionne.nameInter}}</span></p>
+                <p><label for="">description: </label><span>{{interSelectionne.descr}}</span></p>
+                <p><label for="">Date :</label><span>{{interSelectionne.date}}</span></p>
+            </div>
+
+            <!-- <p ng-bind-html="emailSelectionne.content"></p> -->
+
+
+        </div>
+
+        <!--  modal formulaire nouvelle inetervention -->
+        <div class="modal fade" id="newInter" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">New Inter</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label for="inpulibelle4">libellé</label>
+                                    <input type="text" class="form-control" id="inpulibelle4" placeholder="libellé" ng-model="newInter.libelle">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="inputInterv4">Intervenant</label>
+                                    <input type="text" class="form-control" id="inputInterv4" placeholder="Intervenant" ng-model="newInter.nameInter">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="inputDescrp">Description</label>
+                                <input type="text" class="form-control" id="inputDescrp"
+                                    placeholder="Votre description" ng-model="newInter.descr">
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label for="inputLieu">Lieu</label>
+                                    <input type="text" class="form-control" id="inputlieu" ng-model="newInter.lieu">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="inputDate">Date</label>
+                                    <input type="date" class="form-control" id="inputDate" ng-model="newInter.date">
+                                </div>
+
+                            </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary" ng-click="envoiInter()">Enregistrer</button>
+                    </form>
+                    <div class="spacer">
+                        <pre>{{newInter | json}}</pre>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.min.js"></script>
+    <!-- <script src="lib/angular-1.7.9/angular.min.js"></script> -->
+    <!-- <script src="app.js"></script> -->
+
+
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular-sanitize.js"></script>
+    <!-- <script src="./lib/angular-1.7.9/angular-sanitize.min.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-i18n/1.6.6/angular-locale_fr-fr.min.js"></script>
+    <script type="text/javascript" src="./js/app.js"></script>
+
+
+</body>
+
+</html>
